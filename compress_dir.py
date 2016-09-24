@@ -1,17 +1,17 @@
-import Image
-import os
+from os import listdir
+from os.path import isfile, join
 import qrcode
 
 
-# no currently implemented recrusively, only direct children
 def compress_files(directory):
-    compressed_images = []
-    for filename in os.listdir(directory):
-        # path = os.path.join(directory, filename)
-        img_file = qr_encode(filename)
-        compressed_images.append(img_file)
-    stitch_images(compressed_images)
-
+    filepaths = []
+    for root, directories, files in os.walk(directory):
+       for filename in files:
+            filepath = os.path.join(root, filename)
+            filepaths.append(filepath)
+    compressed_images = [qr_encode(f) for f in filenames]
+    frames = stitch_images(compressed_images)
+    video_file = convert_to_video(frames)
 
 def qr_encode(filename):
     qr = qrcode.QRCode(
