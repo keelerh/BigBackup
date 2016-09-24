@@ -1,17 +1,19 @@
 from os import listdir
 from os.path import isfile, join
 import qrcode
+import zipfile
 
-
-def compress_files(directory):
-    filepaths = []
-    for root, directories, files in os.walk(directory):
-       for filename in files:
-            filepath = os.path.join(root, filename)
-            filepaths.append(filepath)
     compressed_images = [qr_encode(f) for f in filenames]
     frames = stitch_images(compressed_images)
     video_file = convert_to_video(frames)
+
+
+def zipdir(directory, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
+
 
 def qr_encode(filename):
     qr = qrcode.QRCode(
@@ -34,3 +36,9 @@ def stitch_images(image_files, n):  # where n is number of QR codes per frame
 
 
 def convert_to_video():
+
+
+if __name__ == '__main__':
+    zipf = zipfile.ZipFile('Python.zip', 'w', zipfile.ZIP_DEFLATED)
+    zipdir('tmp/', zipf)
+    zipf.close()
