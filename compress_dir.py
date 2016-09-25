@@ -2,7 +2,8 @@ from PIL import Image
 import qrcode
 import tarfile
 import subprocess
-import gnupg
+import os
+# import gnupg
 
 MAX_DATA_PER_QR = 2700
 QR_CODES_PER_FRAME = 60
@@ -14,13 +15,13 @@ def make_tarfile(output_filename, source_dir):
         tar.add(source_dir, source_dir)
 
 
-def encrypt_tar(output, source, public_key):
-    gpg = gnupg.GPG(public_key)
-    with open('storage.tar', 'rb') as f:
-    status = gpg.encrypt_file(
-        f, recipients=['User'],
-        always_trust='true',
-        output='storage.tar.gpg')
+#  def encrypt_tar(output, source, public_key):
+#      gpg = gnupg.GPG(public_key)
+#      with open('storage.tar', 'rb') as f:
+#          status = gpg.encrypt_file(
+#              f, recipients=['User'],
+#              always_trust='true',
+#              output='storage.tar.gpg')
 
 
 def qr_encode(zipped_dir):
@@ -34,7 +35,6 @@ def qr_encode(zipped_dir):
     bytesread = 0
     with open(zipped_dir, 'r') as f:
         for line in f:
-            print bytesread
             bytesread += len(line)
             if bytesread >= MAX_DATA_PER_QR:
                 bytesread -= len(line)
@@ -46,8 +46,8 @@ def qr_encode(zipped_dir):
                         error_correction=qrcode.constants.ERROR_CORRECT_L,
                         box_size=10,
                         border=4,
-                    )
-                bytesread = len(line)
+                      )  # reset qr code generator
+                bytesread = len(line)  # reset size count
             qr.add_data(line)
     if bytesread > 0:
         qr.make(fit=True)
@@ -57,26 +57,6 @@ def qr_encode(zipped_dir):
     for frame, code in enumerate(qr_codes):
         code.save("frame-" + str(frame).zfill(max_len) + ".png")
     return qr_codes
-
-
-def stitch_images(image_files):
-    canvas = Image.new('RGB', YOUTUBE_VIDEO_DIMENSIONS)
-    image_count = 0
-    frames = []
-    while image_count < len(image_files):
-        for i in xrange(0, 1100, 100):
-            for j in xrange(0, 700, 100):
-                im = image_files[i]
-                im.thumbnail(100, 100)
-                canvas.paste(im, (i, j))
-                image_count += 1
-                if image_count >= len(image_files):
-                    break
-        frames.append(canvas)
-        canvas = Image.new('RGB', YOUTUBE_VIDEO_DIMENSIONS)
-        for i, qr in enumerate(frames):
-            qr.save("frame" + i + ".png")
-    return frames
 
 
 def convert_to_mp4(image_files, output_filename):
@@ -96,15 +76,15 @@ def convert_to_mp4(image_files, output_filename):
     #      pipe.stdin.write(image.tobytes())
     #  pipe.stdin.close()
     #  pipe.stderr.close()
-    subprocess.call(['ffmpeg', '-r', '60', '-s', '177x177',
-        '-i', 'frame-%d.png', 'youtube_test.mp4'],
+    subprocess.call(['ffmpeg', '-f', 'image2', '-r', '6', '-s', '177x177',
+        '-i', 'frame-%d.png', 'test.mp4'],
         shell=True)
 
 
 if __name__ == '__main__':
     make_tarfile('compressed_test', 'test')
-    encrypt_tar('test', 'test', 'public_key')
-    os.system('storage.tar')
+#    encrypt_tar('test', 'test', 'public_key')
+    #os.system('storage.tar')
     compressed_images = qr_encode('compressed_test')
     # frames = stitch_images(compressed_images)
     convert_to_mp4(compressed_images, 'vid_for_tube.mp4')
