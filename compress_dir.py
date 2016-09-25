@@ -1,8 +1,7 @@
-from PIL import Image
 import qrcode
 import tarfile
 import subprocess
-import os
+# import os
 # import gnupg
 
 MAX_DATA_PER_QR = 2700
