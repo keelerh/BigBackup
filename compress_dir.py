@@ -76,9 +76,8 @@ def convert_to_mp4(image_files, output_filename):
     #      pipe.stdin.write(image.tobytes())
     #  pipe.stdin.close()
     #  pipe.stderr.close()
-    subprocess.call(['ffmpeg', '-f', 'image2', '-r', '6', '-s', '177x177',
-        '-i', 'frame-%d.png', 'test.mp4'],
-        shell=True)
+    subprocess.call(['ffmpeg', '-r', '6', '-s', '177x177',
+        '-i', 'frame-0.png', 'test.mp4'])
 
 
 if __name__ == '__main__':
