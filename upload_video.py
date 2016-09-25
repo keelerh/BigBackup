@@ -136,7 +136,7 @@ def resumable_upload(insert_request):
         print "Video id '%s' was successfully uploaded." % response['id']
         open("link.txt","w").close()
         text_file = open("link.txt", "w")
-        text_file.write("https://www.youtube.com/watch?v=%s" % response['id'])
+        text_file.write("%s" % response['id'])
         text_file.close()
       else:
         exit("The upload failed with an unexpected response: %s" % response)
