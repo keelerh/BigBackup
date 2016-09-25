@@ -32,7 +32,7 @@ storage = open("storage.tar", "w+")
 # Processes each frame and appends the data to storage.tar
 lastFrameNumber = max(glob.iglob('*.[Mm][Pp]4'), key=os.path.getctime)
 lastFrameNumber = lastFrameNumber[6:13]
-for frame in range(0 to (lastFrameNumber + 1)):
+for frame in range(1 to (lastFrameNumber + 1)):
 	myQR = QR(filename="frame-"+frame.zfill(7)+".png")
 	if myQR.decode():
 		with open("storage.tar", "a") as storage:
