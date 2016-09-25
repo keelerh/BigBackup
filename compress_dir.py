@@ -3,6 +3,7 @@ import qrcode
 import tarfile
 import subprocess
 import numpy
+import gnupg
 
 MAX_DATA_PER_QR = 2700
 QR_CODES_PER_FRAME = 60
@@ -13,6 +14,15 @@ FFMPEG_BIN = "ffmpeg"
 def make_tarfile(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, source_dir)
+        
+def encrypt_tar(output, source, public_key):
+    gpg = gnupg.GPG(public_key)
+    with open('storage.tar', 'rb') as f:
+    status = gpg.encrypt_file(
+        f, recipients=['User'],
+        always_trust='true',
+        output='storage.tar.gpg')
+    
 
 
 def qr_encode(zipped_dir):
@@ -87,6 +97,8 @@ def convert_to_mp4(image_files, output_filename):
 
 if __name__ == '__main__':
     make_tarfile('compressed_test', 'test')
+    encrypt_tar('test', 'test', 'public_key')
+    os.system('storage.tar')
     compressed_images = qr_encode('compressed_test')
     # frames = stitch_images(compressed_images)
     convert_to_mp4(compressed_images, 'vid_for_tube.mp4')
