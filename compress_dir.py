@@ -47,7 +47,20 @@ def qr_encode(zipped_dir):
                         border=4,
                       )  # reset qr code generator
                 bytesread = len(line)  # reset size count
-            qr.add_data(line)
+            if len(line) > MAX_DATA_PER_QR:
+                n = MAX_DATA_PER_QR % len(line)
+                for x in xrange(n):
+                    qr = qrcode.QRCode(
+                            version=1,
+                            error_correction=qrcode.constants.ERROR_CORRECT_L,
+                            box_size=10,
+                            border=4,
+                          )  # reset qr code generator
+                    qr.add_data(line[MAX_DATA_PER_QR / x: MAX_DATA_PER_QR / (x
+                                     + 1) - 1])
+                bytesread = 0
+            else:
+                qr.add_data(line)
     if bytesread > 0:
         qr.make(fit=True)
         img_file = qr.make_image()
@@ -59,7 +72,7 @@ def qr_encode(zipped_dir):
 
 
 def convert_to_mp4(image_files, output_filename):
-    subprocess.call(['ffmpeg', '-r', '6', '-s', '177x177',
+    subprocess.call(['ffmpeg', '-r', '1', '-s', '177x177',
                      '-i', 'frame-%d.png', output_filename])
 
 
