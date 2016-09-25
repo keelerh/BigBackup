@@ -2,13 +2,21 @@ import Image
 from os import listdir
 from os.path import isfile, join
 import qrcode
-import libarchive
+
+import libarchive.public
+import libarchive.constants
 
 
 MAX_DATA_PER_QR = 2956
 QR_CODES_PER_FRAME = 60
 YOUTUBE_VIDEO_DIMENSIONS = (1920, 1080)
 
+def 7z:
+    for entry in libarchive.public.create_file(
+                'qr.7z',
+                libarchive.constants.ARCHIVE_FORMAT_7ZIP,
+                ['/etc/qr4compress']):
+    print(entry)
 
 
 def qr_encode(zipped_dir):
