@@ -40,20 +40,26 @@ def qr_encode(zipped_dir):
             border=4,
         )
     bytesread = 0
-    for line in zipped_dir:
-        if bystesread >= MAX_DATA_PER_QR:
-            qr.make(fit=True)
-            img_file = qr.make_image()
-            qr_codes.append(img_file)
-            qr = qrcode.QRCode(
-                    version=1,
-                    error_correction=qrcode.constants.ERROR_CORRECT_L,
-                    box_size=10,
-                    border=4,
-                )  # reset qr code generator
-            bytesread = 0  # reset size count
-        qr.add_data(line)
-        bytesread += len(line)
+    with open(zipped_dir, 'r') as f:
+        for line in f:
+            bytesread += len(line)
+            if bytesread >= MAX_DATA_PER_QR:
+                bytesread -= len(line)
+                qr.make(fit=True)
+                img_file = qr.make_image()
+                qr_codes.append(img_file)
+                qr = qrcode.QRCode(
+                        version=1,
+                        error_correction=qrcode.constants.ERROR_CORRECT_L,
+                        box_size=10,
+                        border=4,
+                    )  # reset qr code generator
+                bytesread = len(line)  # reset size count
+            qr.add_data(line)
+    if bytesread > 0:
+        qr.make(fit=True)
+        img_file = qr.make_image()
+        qr_codes.append(img_file)
     return qr_codes
 
 
