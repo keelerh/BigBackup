@@ -4,7 +4,21 @@ import libarchive.constants
 from os import listdir
 from os.path import isfile, join
 import qrcode
+import libarchive.public
+import libarchive.constants
+import os
 
+
+filenames = []
+for root, dirs, files in os.walk('/home/user/qr4compress/'):
+	filenames.extend([os.path.join(root, f) for f in files])
+zipfile = libarchive.public.create_file(
+	'create.7z',
+	libarchive.constants.ARCHIVE_FORMAT_7ZIP,
+	filenames)
+for x in zipfile:
+	print x
+print(zipfile)
 
 MAX_DATA_PER_QR = 2956
 QR_CODES_PER_FRAME = 60
