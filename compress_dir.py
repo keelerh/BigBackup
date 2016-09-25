@@ -9,27 +9,21 @@ import libarchive.constants
 import os
 
 
-filenames = []
-for root, dirs, files in os.walk('/home/user/qr4compress/'):
-	filenames.extend([os.path.join(root, f) for f in files])
-zipfile = libarchive.public.create_file(
-	'create.7z',
-	libarchive.constants.ARCHIVE_FORMAT_7ZIP,
-	filenames)
-for x in zipfile:
-	print x
-print(zipfile)
-
 MAX_DATA_PER_QR = 2956
 QR_CODES_PER_FRAME = 60
 YOUTUBE_VIDEO_DIMENSIONS = (1920, 1080)
 
-def compress_7z(directory):
-    for entry in libarchive.public.create_file(
-                'qr.7z',
-                libarchive.constants.ARCHIVE_FORMAT_7ZIP,
-                ['/etc/qr4compress']):
-    print(entry)
+
+def zip_dir(directory):
+    filenames = []
+    for root, dirs, files in os.walk(directory):
+        filenames.extend([os.path.join(root, f) for f in files])
+    zipfile = libarchive.public.create_file(
+        'create.7z',
+        libarchive.constants.ARCHIVE_FORMAT_7ZIP,
+        filenames)
+    return zipfile
+
 
 def qr_encode(zipped_dir):
     qr_codes = []
@@ -53,8 +47,8 @@ def qr_encode(zipped_dir):
                         error_correction=qrcode.constants.ERROR_CORRECT_L,
                         box_size=10,
                         border=4,
-                    )  # reset qr code generator
-                bytesread = len(line)  # reset size count
+                    )
+                bytesread = len(line)
             qr.add_data(line)
     if bytesread > 0:
         qr.make(fit=True)
