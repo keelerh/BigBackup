@@ -28,8 +28,6 @@ os.system("ffmpeg -i " + link + ".mp4 -r 60 -s 1920x1080 -f image2 frame-%07d.pn
 # The .tar where things are stored
 storage = open("storage.tar.gpg", "w+")
 
-def decryptTar()
-
 # Processes each frame and appends the data to storage.tar
 lastFrameNumber = max(glob.iglob('*.[Mm][Pp]4'), key=os.path.getctime)
 lastFrameNumber = lastFrameNumber[6:13]
