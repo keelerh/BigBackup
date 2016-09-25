@@ -134,6 +134,7 @@ def resumable_upload(insert_request):
       status, response = insert_request.next_chunk()
       if 'id' in response:
         print "Video id '%s' was successfully uploaded." % response['id']
+        open("link.txt","w").close()
         text_file = open("link.txt", "w")
         text_file.write("https://www.youtube.com/watch?v=%s" % response['id'])
         text_file.close()
