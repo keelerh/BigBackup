@@ -14,6 +14,8 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
 
+from compress_dir import prepare_user_content
+
 
 # Explicitly tell the underlying HTTP transport library not to retry, since
 # we are handling retry logic ourselves.
@@ -92,7 +94,7 @@ def initialize_upload(youtube, options):
 
   body=dict(
     snippet=dict(
-      title=options.title,
+      title='BigBackup Upload',
       description=options.description,
       tags=tags,
       categoryId=options.category
@@ -117,7 +119,7 @@ def initialize_upload(youtube, options):
     # practice, but if you're using Python older than 2.6 or if you're
     # running on App Engine, you should set the chunksize to something like
     # 1024 * 1024 (1 megabyte).
-    media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
+    media_body=MediaFileUpload('backup.mp4', chunksize=-1, resumable=True)
   )
 
   resumable_upload(insert_request)
@@ -176,6 +178,8 @@ if __name__ == '__main__':
 
   if not os.path.exists(args.file):
     exit("Please specify a valid file using the --file= parameter.")
+
+  prepare_user_content(args.file)
 
   youtube = get_authenticated_service(args)
   try:

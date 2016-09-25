@@ -59,30 +59,13 @@ def qr_encode(zipped_dir):
 
 
 def convert_to_mp4(image_files, output_filename):
-    #  command = [FFMPEG_BIN, '-y',  # (optional) overwrite output file if it exists
-    #              '-f', 'rawvideo',
-    #              '-vcodec', 'rawvideo',
-    #              '-s', '177x177',  # size of one frame
-    #              '-pix_fmt', 'rgb24',
-    #              '-r', '24',  # frames per second
-    #              '-i', '-',  # The imput comes from a pipe
-    #              '-an',  # Tells FFMPEG not to expect any audio
-    #              '-vcodec', 'mpeg',
-    #              output_filename]
-    #  pipe = subprocess.Popen(command, stdin=subprocess.PIPE,
-    #          stderr=subprocess.PIPE, shell=True)
-    #  for image in image_files:
-    #      pipe.stdin.write(image.tobytes())
-    #  pipe.stdin.close()
-    #  pipe.stderr.close()
     subprocess.call(['ffmpeg', '-r', '6', '-s', '177x177',
-        '-i', 'frame-0.png', 'test.mp4'])
+                     '-i', 'frame-%d.png', output_filename])
 
 
-if __name__ == '__main__':
-    make_tarfile('compressed_test', 'test')
-#    encrypt_tar('test', 'test', 'public_key')
-    #os.system('storage.tar')
-    compressed_images = qr_encode('compressed_test')
-    # frames = stitch_images(compressed_images)
-    convert_to_mp4(compressed_images, 'vid_for_tube.mp4')
+def prepare_user_content(path):
+    make_tarfile('tmp', path)
+    # encrypt_tar('test', 'test', 'public_key')
+    # os.system('storage.tar')
+    compressed_images = qr_encode('tmp')
+    convert_to_mp4(compressed_images, 'backup.mp4')
