@@ -1,24 +1,15 @@
 from PIL import Image
 import qrcode
 import tarfile
-import gzip
 
 MAX_DATA_PER_QR = 2900
 QR_CODES_PER_FRAME = 60
 YOUTUBE_VIDEO_DIMENSIONS = (1920, 1080)
-BLOCKSIZE = 1 << 16  # 64kB
 
 
-def gzipfile(iname, oname, level):
-    with open(iname, 'rb') as f_in:
-        f_out = gzip.open(oname, 'wb', level)
-        while True:
-            block = f_in.read(BLOCKSIZE)
-            if block == '':
-                break
-            f_out.write(block)
-        f_out.close()
-    return
+def make_tarfile(output_filename, source_dir):
+    with tarfile.open(output_filename, "w:gz") as tar:
+        tar.add(source_dir, source_dir)
 
 
 def qr_encode(zipped_dir):
@@ -79,8 +70,8 @@ def stitch_images(image_files):
 
 
 if __name__ == '__main__':
-    gzipfile('6.172.zip', 'gzip_is_cooler', 9)
-    compressed_images = qr_encode('6.172.zip')
+    make_tarfile('compressed_test', 'CMS.628')
+    compressed_images = qr_encode('compressed_test')
     frames = stitch_images(compressed_images)
     print frames
 #    video_file = convert_to_video(frames)
